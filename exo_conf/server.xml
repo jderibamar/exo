@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Server port="8005" shutdown="SHUTDOWN">
+  <Listener className="org.apache.catalina.startup.VersionLoggerListener"/>
+  <Listener className="org.apache.catalina.core.AprLifecycleListener" SSLEngine="on"/>
+  <Listener className="org.apache.catalina.core.JreMemoryLeakPreventionListener"/>
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
+  <Listener className="org.apache.catalina.core.ThreadLocalLeakPreventionListener"/>
+  <Listener className="org.apache.catalina.mbeans.JmxRemoteLifecycleListener" rmiRegistryPortPlatform="10001" rmiServerPortPlatform="10002" useLocalPorts="false"/>
+  <GlobalNamingResources>
+    <Resource name="exo-idm_portal" auth="Container" type="javax.sql.DataSource" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" initialSize="5" maxActive="20" minIdle="5" maxIdle="5" maxWait="10000" validationQuery="SELECT 1" validationQueryTimeout="5" testWhileIdle="true" testOnBorrow="true" testOnReturn="false" timeBetweenEvictionRunsMillis="30000" minEvictableIdleTimeMillis="60000" removeAbandonedOnBorrow="true" removeAbandonedOnMaintenance="true" removeAbandonedTimeout="300" logAbandoned="false" username="exo" password="exo" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://mysql:3306/exo?autoReconnect=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;characterEncoding=utf8"/>
+    <Resource name="exo-jcr_portal" auth="Container" type="javax.sql.DataSource" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" initialSize="5" maxActive="20" minIdle="5" maxIdle="5" maxWait="10000" validationQuery="SELECT 1" validationQueryTimeout="5" testWhileIdle="true" testOnBorrow="true" testOnReturn="false" timeBetweenEvictionRunsMillis="30000" minEvictableIdleTimeMillis="60000" removeAbandonedOnBorrow="true" removeAbandonedOnMaintenance="true" removeAbandonedTimeout="300" logAbandoned="false" username="exo" password="exo" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://mysql:3306/exo?autoReconnect=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true"/>
+    <Resource name="exo-jpa_portal" auth="Container" type="javax.sql.DataSource" factory="org.apache.tomcat.jdbc.pool.DataSourceFactory" initialSize="5" maxActive="20" minIdle="5" maxIdle="5" maxWait="10000" validationQuery="SELECT 1" validationQueryTimeout="5" testWhileIdle="true" testOnBorrow="true" testOnReturn="false" timeBetweenEvictionRunsMillis="30000" minEvictableIdleTimeMillis="60000" removeAbandonedOnBorrow="true" removeAbandonedOnMaintenance="true" removeAbandonedTimeout="300" logAbandoned="false" username="exo" password="exo" driverClassName="com.mysql.jdbc.Driver" url="jdbc:mysql://mysql:3306/exo?autoReconnect=true&amp;useSSL=false&amp;allowPublicKeyRetrieval=true&amp;characterEncoding=utf8"/>
+  </GlobalNamingResources>
+  <Service name="Catalina">
+    <Connector address="0.0.0.0" port="8080" protocol="org.apache.coyote.http11.Http11NioProtocol" enableLookups="false" redirectPort="8443" bindOnInit="false" connectionTimeout="20000" disableUploadTimeout="true" URIEncoding="UTF-8" compression="off" compressionMinSize="2048" noCompressionUserAgents=".*MSIE 6.*" compressableMimeType="text/html,text/xml,text/plain,text/css,text/javascript" proxyName="homologacao3.sds.unb.br" scheme="http" secure="false" proxyPort="80" maxThreads="200" minSpareThreads="10"/>
+    <Engine name="Catalina" defaultHost="localhost" jvmRoute="${exo.cluster.node.name}">
+      <Host name="localhost" appBase="webapps" startStopThreads="-1" unpackWARs="${EXO_TOMCAT_UNPACK_WARS}" autoDeploy="true">
+        <Valve className="org.apache.catalina.authenticator.SingleSignOn"/>
+        <Listener className="org.exoplatform.platform.server.tomcat.PortalContainersCreator"/>
+        <Valve className="org.apache.catalina.valves.ErrorReportValve" showReport="false" showServerInfo="false"/>
+        <Valve className="org.apache.catalina.valves.RemoteIpValve" remoteIpHeader="x-forwarded-for" proxiesHeader="x-forwarded-by" protocolHeader="x-forwarded-proto"/>
+      </Host>
+    </Engine>
+  </Service>
+</Server>

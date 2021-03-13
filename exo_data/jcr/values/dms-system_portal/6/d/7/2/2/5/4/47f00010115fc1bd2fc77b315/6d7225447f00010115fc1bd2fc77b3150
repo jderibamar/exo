@@ -1,0 +1,137 @@
+<%
+  import org.exoplatform.commons.utils.CommonsUtils;
+  import org.exoplatform.services.resources.ResourceBundleService;
+  import org.exoplatform.portal.webui.util.Util;
+  import org.exoplatform.wcm.webui.clv.UICLVPortlet;
+  import org.exoplatform.wcm.webui.Utils;
+  import org.exoplatform.social.core.space.model.Space;
+  import org.exoplatform.social.core.space.spi.SpaceService;
+  import org.exoplatform.services.security.ConversationState;
+  import org.exoplatform.commons.utils.CommonsUtils;
+  import org.exoplatform.container.PortalContainer;
+  import org.exoplatform.news.NewsService;
+  import org.exoplatform.portal.webui.util.Util;
+  import groovy.json.JsonOutput;
+  import org.htmlcleaner.HtmlCleaner;
+  import java.util.*;
+  import org.exoplatform.news.model.News;
+  import org.htmlcleaner.HtmlCleaner;
+  import org.apache.commons.lang.StringUtils;
+
+  SpaceService spaceService = CommonsUtils.getService(SpaceService.class);
+  NewsService newsService = CommonsUtils.getService(NewsService.class);
+  List<News> listNews = new ArrayList<News>();
+  def currentPageData = uicomponent.getCurrentPageData();
+  def nodes = new ArrayList();
+  String sliderSpacePrettyName = System.getProperty("exo.news.slider.space.prettyName", "communication");  
+  def seeAll = _ctx.appRes("news.pinned.seeAll");
+  Space sliderSpace = spaceService.getSpaceByPrettyName(sliderSpacePrettyName);
+  String sliderSpaceId = sliderSpace != null ? sliderSpace.getId() : null;
+  for (int i=0 ; i < currentPageData.size(); i++) {
+    def node = currentPageData.get(i);
+    if(Utils.isViewable(node) && (sliderSpaceId == null || !node.hasProperty("exo:spaceId") || !node.getProperty("exo:spaceId").getString().equals(sliderSpaceId))) {
+      nodes.add(node);
+
+      def news = newsService.convertNodeToNews(node);
+      def body = new HtmlCleaner().clean(news.getBody()).getText();
+      if( body != null ){
+        news.setBody(body.toString());
+      }
+      listNews.add(news);
+
+      if(listNews.size() >= 4) {
+        break;
+      }
+    }
+  }
+    ResourceBundleService resourceBundleService = CommonsUtils.getService(ResourceBundleService.class);
+    newsResourceBundle = resourceBundleService.getResourceBundle("locale.portlet.news.News", Util.getPortalRequestContext().getLocale());
+    def header = _ctx.appRes("news.latest.header");
+    def isShowHeader = uicomponent.isShowField(UICLVPortlet.PREFERENCE_SHOW_HEADER) && header?.trim();
+    def siteName = Util.getPortalRequestContext().getPortalOwner();
+    def seeAllUrl = "/portal/" + siteName + "/news?filter=pinned";
+
+    List newsInfos = new ArrayList();
+    for(News news : listNews) {
+      Map<String, String> newsInfo = new HashMap();
+      newsInfo.put("id", news.id);
+      newsInfo.put("title", news.title);
+      if (StringUtils.isNotEmpty(news.summary)){
+        newsInfo.put("body", news.summary);
+      }else {
+        newsInfo.put("body", news.body);
+      }
+      newsInfo.put("illustrationURL", news.illustrationURL);
+      newsInfo.put("url", news.url);
+      newsInfos.add(newsInfo);
+    }
+
+    def params = """ {
+      newsInfo: ${JsonOutput.toJson(newsInfos)},
+      seeAllLabel: '$seeAll',
+      header: '${header}',
+      url: '${seeAllUrl}',
+      isShowHeader: '${isShowHeader}'
+    } """
+
+    def pcontext = Util.getPortalRequestContext();
+    def jsManager = pcontext.getJavascriptManager().require("SHARED/uiForm");
+    jsManager.require("SHARED/latestNews", "latestNews").addScripts("latestNews.initLatestNews($params);");
+
+%>
+<div class="VuetifyApp">
+  <div id="latestNewsDetails">
+  <div class="skeletonContainer">
+    <div class="containerLeft">
+      <div class="v-skeleton-loader__bone imageNewsLeft">
+        <div class="v-skeleton-loader v-skeleton-loaderUp  v-skeleton-loader--is-loading theme--light newsSkeletonRight imageLeft">
+        </div>
+          <div>
+            <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight v-skeleton-loader__bone text-LingeTop">
+            </div>
+           <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight v-skeleton-loader__bone text-center"> </div>
+             <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight v-skeleton-loader__bone titleNewsLeft"> </div>
+             </div>
+           </div>
+      </div>
+   <div class="imageNewsRight">
+    <div class="v-skeleton-loader__bone blockNewsInner">
+     <div class="newsItem">
+       <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight newsTitleRight">
+       </div>
+       <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight skeletonTextRight">
+       </div>
+    <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight textRight">
+    </div>
+      <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight skeletonText">
+      </div>
+    </div>
+   </div>
+  <div class="v-skeleton-loader__bone blockNewsInner">
+    <div class="newsItem">
+       <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight newsTitleRight">
+       </div>
+       <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight skeletonTextRight">
+       </div>
+       <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight textRight">
+       </div>
+       <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight skeletonText">
+       </div>
+     </div>
+  </div>
+ <div class="v-skeleton-loader__bone blockNewsInner">
+   <div class="newsItem">
+     <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight newsTitleRight">
+     </div>
+     <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight skeletonTextRight">
+     </div>
+       <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight textRight">
+       </div>
+      <div class="v-skeleton-loader  v-skeleton-loader--is-loading theme--light newsSkeletonRight skeletonText">
+      </div>
+     </div>
+    </div>
+   </div>
+  </div>
+ </div>
+</div>

@@ -1,0 +1,4 @@
+# robots.txt 
+User-agent: * 
+Disallow: 
+Sitemap: http://comunidade.sds.proepi.org.br/portal/dw/sitemaps.xml 

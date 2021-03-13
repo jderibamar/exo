@@ -1,0 +1,42 @@
+1) apt-get install openjdk-8-jdk
+2) export JAVA_HOME=/
+3) cp -R platform-6.0.3/ /opt/exo-platform-6.0.3/
+4) find /opt/exo-platform-6.0.3/ -type d -exec chmod 755 {} \; /* alterar permissões */
+5) find /opt/exo-platform-6.0.3/ -type f -exec chmod 644 {} \;
+6) find /opt/exo-platform-6.0.3/ -name "*.sh" -exec chmod 755 {} \;
+
+apt --force-yes remove nome_pacote
+
+dpkg -r <pkgname> -> remover pacote
+
+git clone https://github.com/ONLYOFFICE/docker-onlyoffice-nextcloud -> para instalar o ONLYOFFICE usando Nexcloud
+
+ip addr show | grep inet -> mostrar as informações de rede
+
+ss -tulpn -> listar as portas TCP / UDP e seus status
+
+lsof -i:8080 -> ver se a porta está sendo usada e por algum programa
+
+apt purge nome_programa -> desinstalar um programa
+
+ps -ef | grep anydesk -> esse comando exibe todo processo que se chame anydesk
+
+lsof -t -i tcp:80 -s tcp:listen | sudo xargs kill -> matar os processos na porta 80
+
+snap remove nextcloud -> remove o nextcloud
+
+update-java-alternatives -l -> para saber onde o Java está instalado
+
+nano /etc/systemd/system/tomcat.service -> para habilitar o TOMCAT como um serviço
+
+service tomcat start / stop para iniciar / parar o TOMCAT
+
+systemctl -t service -> lsitar todos os serviço e em execução
+
+systemctl disable sendmail.service -> desativar um serviço
+
+systemctl enable crond.service -> ativar um serviço
+
+systemctl is-enabled iptables.service -> Conferir se serviços estão ativos
+
+/var/www/html/data -> pasta de dados do NEXTCLOUD
