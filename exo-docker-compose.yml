@@ -4,7 +4,7 @@ services:
   exo:
     restart: always
     image: exoplatform/exo:6.2_latest
-    container_name: exo_exo
+    container_name: exo
     ports:
       - "8080:8080"
     depends_on:
@@ -17,7 +17,7 @@ services:
 #      - ./exo_conf/server.xml:/opt/exo/conf/server.xml:ro
      
     environment:
-      - EXO_PROXY_VHOST=colabora.proepi.org.br
+      - EXO_PROXY_VHOST=comunidade.sds.proepi.org.br
       - EXO_PROXY_PORT=80
       - EXO_PROXY_SSL="true"
       - EXO_DB_HOST=mysql
@@ -33,12 +33,17 @@ services:
       - EXO_MAIL_SMTP_USERNAME=comunidade.sds@proepi.org.br
       - EXO_MAIL_SMTP_PASSWORD=bMY$R9rLEHpm2Q#
       - EXO_JVM_LOG_GC_ENABLED="true"
-#      - EXO_ADDONS_LIST=
+     # - EXO_DB_POOL_IDM_INIT_SIZE=5
+      - EXO_DB_POOL_IDM_MAX_SIZE=90
+     # - EXO_DB_POOL_JCR_INIT_SIZE=5
+      - EXO_DB_POOL_JCR_MAX_SIZE=120
+      - EXO_DB_POOL_JPA_MAX_SIZE=120      
+    # - EXO_ADDONS_LIST=
 
   mongo:
     restart: always
     image: mongo:4.4
-    container_name: exo_mongo
+    container_name: mongo
     volumes:
       - mongo_conf:/data/configdb
       - ./mongo_data:/data/db:rw
@@ -46,7 +51,9 @@ services:
   mysql:
     restart: always
     image: mysql:8.0
-    container_name: exo_mysql
+    container_name: mysql
+    ports:
+    - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=exo
       - MYSQL_DATABASE=exo
